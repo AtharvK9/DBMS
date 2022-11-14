@@ -1,0 +1,196 @@
+atharva@atharva-Aspire-A514-54:~$ mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 11
+Server version: 8.0.31-0ubuntu0.20.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database ass3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use ass3
+Database changed
+mysql> use ass3;
+Database changed
+mysql> create table emp(emp_id int primary key auto_increment,emp_fname char(20) not null,emp_lname char(20) not null, emp_salary int, join_date date);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc emp
+    -> 
+    -> de
+    -> desc emp;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'desc emp' at line 4
+mysql> desc emp;
++------------+----------+------+-----+---------+----------------+
+| Field      | Type     | Null | Key | Default | Extra          |
++------------+----------+------+-----+---------+----------------+
+| emp_id     | int      | NO   | PRI | NULL    | auto_increment |
+| emp_fname  | char(20) | NO   |     | NULL    |                |
+| emp_lname  | char(20) | NO   |     | NULL    |                |
+| emp_salary | int      | YES  |     | NULL    |                |
+| join_date  | date     | YES  |     | NULL    |                |
++------------+----------+------+-----+---------+----------------+
+5 rows in set (0.01 sec)
+
+mysql> insert into emp value(1, 'Ram', 'Kapoor', 20000, '2015-02-23');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into emp value(null, 'Raj', 'Kapoor', 20000, '2017-02-23');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp value(null, 'Ramesh', 'Kapoor', 40000, '2017-08-14');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from emp;
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
+|      3 | Ramesh    | Kapoor    |      40000 | 2017-08-14 |
++--------+-----------+-----------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> update emp set emp_salary=10000 where emp_id=3;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from emp;
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
+|      3 | Ramesh    | Kapoor    |      10000 | 2017-08-14 |
++--------+-----------+-----------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> delete from emp where emp_id=3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from emp;
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
++--------+-----------+-----------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into emp value(null, 'Ramesh', 'Kapoor', 40000, '2017-08-14');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from emp;
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
+|      4 | Ramesh    | Kapoor    |      40000 | 2017-08-14 |
++--------+-----------+-----------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select avg(emp_salary) from emp;
++-----------------+
+| avg(emp_salary) |
++-----------------+
+|      26666.6667 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> select concat(emp_fname,emp_lname) from emp where max(emp_salary);
+ERROR 1111 (HY000): Invalid use of group function
+mysql> select concat(emp_fname,emp_lname) from emp where emp_salary in (select max(emp_salary)from emp);
++-----------------------------+
+| concat(emp_fname,emp_lname) |
++-----------------------------+
+| RameshKapoor                |
++-----------------------------+
+1 row in set (0.00 sec)
+
+mysql> select upper(concat(emp_fname,emp_lname)) from emp where emp_salary in (select max(emp_salary)from emp);
++------------------------------------+
+| upper(concat(emp_fname,emp_lname)) |
++------------------------------------+
+| RAMESHKAPOOR                       |
++------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from emp where year(join_date)='2015';
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
++--------+-----------+-----------+------------+------------+
+1 row in set (0.01 sec)
+
+mysql> select * from emp where emp_fname like 'Ram%';
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      4 | Ramesh    | Kapoor    |      40000 | 2017-08-14 |
++--------+-----------+-----------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into emp value(null, 'Rushi', 'Kapoor',null, '2013-04-16');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from emp;
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
+|      4 | Ramesh    | Kapoor    |      40000 | 2017-08-14 |
+|      5 | Rushi     | Kapoor    |       NULL | 2013-04-16 |
++--------+-----------+-----------+------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from emp where name emp_id in('1', '2', '3');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'emp_id in('1', '2', '3')' at line 1
+mysql> select * from emp where emp_id in('1', '2', '3');
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
++--------+-----------+-----------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from emp where emp_id not in('1', '2', '3');
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      4 | Ramesh    | Kapoor    |      40000 | 2017-08-14 |
+|      5 | Rushi     | Kapoor    |       NULL | 2013-04-16 |
++--------+-----------+-----------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from emp where year(join_date) between '2013' to '2016';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'to '2016'' at line 1
+mysql> select * from emp where year(join_date) between '2013' and '2016';
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      1 | Ram       | Kapoor    |      20000 | 2015-02-23 |
+|      5 | Rushi     | Kapoor    |       NULL | 2013-04-16 |
++--------+-----------+-----------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from emp where year(join_date) between '2016' and '2018';
++--------+-----------+-----------+------------+------------+
+| emp_id | emp_fname | emp_lname | emp_salary | join_date  |
++--------+-----------+-----------+------------+------------+
+|      2 | Raj       | Kapoor    |      20000 | 2017-02-23 |
+|      4 | Ramesh    | Kapoor    |      40000 | 2017-08-14 |
++--------+-----------+-----------+------------+------------+
+2 rows in set (0.00 sec)
+
