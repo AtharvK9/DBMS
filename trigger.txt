@@ -1,0 +1,184 @@
+atharva@atharva-Aspire-A514-54:~$ mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 16
+Server version: 8.0.31-0ubuntu0.20.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database ass8;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> create table stud(sid int primary key, name char(20), class char(20), age int, issued char(1));
+ERROR 1046 (3D000): No database selected
+mysql> use ass8;
+Database changed
+mysql> create table stud(sid int primary key, name char(20), class char(20), age int, issued char(1));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc stud;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| sid    | int      | NO   | PRI | NULL    |       |
+| name   | char(20) | YES  |     | NULL    |       |
+| class  | char(20) | YES  |     | NULL    |       |
+| age    | int      | YES  |     | NULL    |       |
+| issued | char(1)  | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> create table returned(sid int, bname char(20), bauthor char(20));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc returned;
++---------+----------+------+-----+---------+-------+
+| Field   | Type     | Null | Key | Default | Extra |
++---------+----------+------+-----+---------+-------+
+| sid     | int      | YES  |     | NULL    |       |
+| bname   | char(20) | YES  |     | NULL    |       |
+| bauthor | char(20) | YES  |     | NULL    |       |
++---------+----------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> insert into stud values(1, 'ram', '11-A', 17, 'I');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> create table issued(sid int, bname char(20));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> alter table stud add column bname char(20);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc stud;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| sid    | int      | NO   | PRI | NULL    |       |
+| name   | char(20) | YES  |     | NULL    |       |
+| class  | char(20) | YES  |     | NULL    |       |
+| age    | int      | YES  |     | NULL    |       |
+| issued | char(1)  | YES  |     | NULL    |       |
+| bname  | char(20) | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger tr_ins_stud
+    -> before insert
+    -> on stud
+    -> for each row
+    -> begin
+    -> insert into issued values(new.sid, new.bname);
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into stud values(2, 'karan', '2-A', 20, 'I', 'mystory');
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> delimiter ;
+mysql> select * from issued;
++------+---------+
+| sid  | bname   |
++------+---------+
+|    2 | mystory |
++------+---------+
+1 row in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger tr_del_stud
+    -> after delete
+    -> on stud
+    -> for each row
+    -> begin
+    -> delete from issued where sid=old.sid;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter ;
+mysql> delete from stud where sid=2;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from issued;
+Empty set (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger tr_up_issued
+    -> on stud
+    -> for each row
+    -> begin
+    -> update issued
+    -> set sid=new.sid where sid=old.sid;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'on stud
+for each row
+begin
+update issued
+set sid=new.sid where sid=old.sid;
+end' at line 2
+mysql> create trigger tr_up_issued after update on stud for each row begin update issued set sid=new.sid where sid=old.sid; end;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+mysql> update stud set sid=3 where sid=2;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> select * from stud;
++-----+------+-------+------+--------+-------+
+| sid | name | class | age  | issued | bname |
++-----+------+-------+------+--------+-------+
+|   1 | ram  | 11-A  |   17 | I      | NULL  |
++-----+------+-------+------+--------+-------+
+1 row in set (0.00 sec)
+
+mysql> insert into stud values(2, 'karan', '2-A', 20, 'I', 'mystory');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> update stud set sid=3 where sid=2;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from stud;
++-----+-------+-------+------+--------+---------+
+| sid | name  | class | age  | issued | bname   |
++-----+-------+-------+------+--------+---------+
+|   1 | ram   | 11-A  |   17 | I      | NULL    |
+|   3 | karan | 2-A   |   20 | I      | mystory |
++-----+-------+-------+------+--------+---------+
+2 rows in set (0.00 sec)
+
+mysql> select * from issued;
++------+---------+
+| sid  | bname   |
++------+---------+
+|    3 | mystory |
++------+---------+
+1 row in set (0.00 sec)
+
+mysql> show triggers
+    -> ;
++--------------+--------+-------+------------------------------------------------------------+--------+------------------------+-----------------------------------------------------------------------------------------------------------------------+----------------+----------------------+----------------------+--------------------+
+| Trigger      | Event  | Table | Statement                                                  | Timing | Created                | sql_mode                                                                                                              | Definer        | character_set_client | collation_connection | Database Collation |
++--------------+--------+-------+------------------------------------------------------------+--------+------------------------+-----------------------------------------------------------------------------------------------------------------------+----------------+----------------------+----------------------+--------------------+
+| tr_ins_stud  | INSERT | stud  | begin
+insert into issued values(new.sid, new.bname);
+end   | BEFORE | 2022-11-14 18:55:47.49 | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | root@localhost | utf8mb4              | utf8mb4_0900_ai_ci   | utf8mb4_0900_ai_ci |
+| tr_up_issued | UPDATE | stud  | begin update issued set sid=new.sid where sid=old.sid; end | AFTER  | 2022-11-14 19:04:11.00 | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | root@localhost | utf8mb4              | utf8mb4_0900_ai_ci   | utf8mb4_0900_ai_ci |
+| tr_del_stud  | DELETE | stud  | begin
+delete from issued where sid=old.sid;
+end            | AFTER  | 2022-11-14 18:59:42.66 | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | root@localhost | utf8mb4              | utf8mb4_0900_ai_ci   | utf8mb4_0900_ai_ci |
++--------------+--------+-------+------------------------------------------------------------+--------+------------------------+-----------------------------------------------------------------------------------------------------------------------+----------------+----------------------+----------------------+--------------------+
+3 rows in set (0.01 sec)
+
