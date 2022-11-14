@@ -1,0 +1,160 @@
+atharva@atharva-Aspire-A514-54:~$ mongo
+MongoDB shell version v3.6.8
+connecting to: mongodb://127.0.0.1:27017
+Implicit session: session { "id" : UUID("c3d66132-f9d5-4005-8d73-66550b992c61") }
+MongoDB server version: 3.6.8
+Server has startup warnings: 
+2022-11-14T21:00:00.104+0530 I STORAGE  [initandlisten] 
+2022-11-14T21:00:00.104+0530 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2022-11-14T21:00:00.104+0530 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] 
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] 
+> use ass3
+switched to db ass3
+> db.ass3.insert({roll:1,name:'navin', subject:'oop', marks:75})
+WriteResult({ "nInserted" : 1 })
+> db.ass3.insert({roll:2,name:'anus', subject:'dsa', marks:87})
+WriteResult({ "nInserted" : 1 })
+> db.ass3.insert({roll:3,name:'geeta', subject:'dbms', marks:87})
+WriteResult({ "nInserted" : 1 })
+> db.ass3.insert({roll:4,name:'atharva', subject:'cns', marks:69})
+WriteResult({ "nInserted" : 1 })
+> db.ass3.find()
+{ "_id" : ObjectId("637279ac9fd07639fd6a7536"), "roll" : 1, "name" : "navin", "subject" : "oop", "marks" : 75 }
+{ "_id" : ObjectId("637279be9fd07639fd6a7537"), "roll" : 2, "name" : "anus", "subject" : "dsa", "marks" : 87 }
+{ "_id" : ObjectId("63727a3e9fd07639fd6a7538"), "roll" : 3, "name" : "geeta", "subject" : "dbms", "marks" : 87 }
+{ "_id" : ObjectId("63727a5f9fd07639fd6a7539"), "roll" : 4, "name" : "atharva", "subject" : "cns", "marks" : 69 }
+> db.ass3.insert({roll:5,name:'yash', subject:'oop', marks:69})
+WriteResult({ "nInserted" : 1 })
+> db.ass3.insert({roll:6,name:'ham', subject:'merc', marks:79})
+WriteResult({ "nInserted" : 1 })
+> db.ass3.find()
+{ "_id" : ObjectId("637279ac9fd07639fd6a7536"), "roll" : 1, "name" : "navin", "subject" : "oop", "marks" : 75 }
+{ "_id" : ObjectId("637279be9fd07639fd6a7537"), "roll" : 2, "name" : "anus", "subject" : "dsa", "marks" : 87 }
+{ "_id" : ObjectId("63727a3e9fd07639fd6a7538"), "roll" : 3, "name" : "geeta", "subject" : "dbms", "marks" : 87 }
+{ "_id" : ObjectId("63727a5f9fd07639fd6a7539"), "roll" : 4, "name" : "atharva", "subject" : "cns", "marks" : 69 }
+{ "_id" : ObjectId("63727afa9fd07639fd6a753a"), "roll" : 5, "name" : "yash", "subject" : "oop", "marks" : 69 }
+{ "_id" : ObjectId("63727b1c9fd07639fd6a753b"), "roll" : 6, "name" : "ham", "subject" : "merc", "marks" : 79 }
+> db.ass3.createIndex({name:1})
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+> db.ass3.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "ass3.ass3"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"name" : 1
+		},
+		"name" : "name_1",
+		"ns" : "ass3.ass3"
+	}
+]
+> db.ass3.find().sort({name:1})
+{ "_id" : ObjectId("637279be9fd07639fd6a7537"), "roll" : 2, "name" : "anus", "subject" : "dsa", "marks" : 87 }
+{ "_id" : ObjectId("63727a5f9fd07639fd6a7539"), "roll" : 4, "name" : "atharva", "subject" : "cns", "marks" : 69 }
+{ "_id" : ObjectId("63727a3e9fd07639fd6a7538"), "roll" : 3, "name" : "geeta", "subject" : "dbms", "marks" : 87 }
+{ "_id" : ObjectId("63727b1c9fd07639fd6a753b"), "roll" : 6, "name" : "ham", "subject" : "merc", "marks" : 79 }
+{ "_id" : ObjectId("637279ac9fd07639fd6a7536"), "roll" : 1, "name" : "navin", "subject" : "oop", "marks" : 75 }
+{ "_id" : ObjectId("63727afa9fd07639fd6a753a"), "roll" : 5, "name" : "yash", "subject" : "oop", "marks" : 69 }
+> db.ass3.find().sort({name:-1})
+{ "_id" : ObjectId("63727afa9fd07639fd6a753a"), "roll" : 5, "name" : "yash", "subject" : "oop", "marks" : 69 }
+{ "_id" : ObjectId("637279ac9fd07639fd6a7536"), "roll" : 1, "name" : "navin", "subject" : "oop", "marks" : 75 }
+{ "_id" : ObjectId("63727b1c9fd07639fd6a753b"), "roll" : 6, "name" : "ham", "subject" : "merc", "marks" : 79 }
+{ "_id" : ObjectId("63727a3e9fd07639fd6a7538"), "roll" : 3, "name" : "geeta", "subject" : "dbms", "marks" : 87 }
+{ "_id" : ObjectId("63727a5f9fd07639fd6a7539"), "roll" : 4, "name" : "atharva", "subject" : "cns", "marks" : 69 }
+{ "_id" : ObjectId("637279be9fd07639fd6a7537"), "roll" : 2, "name" : "anus", "subject" : "dsa", "marks" : 87 }
+> db.ass3.find().({name:'geeta'})
+2022-11-14T23:04:26.205+0530 E QUERY    [thread1] SyntaxError: missing name after . operator @(shell):1:15
+> db.ass3.find({name:'geeta'})
+{ "_id" : ObjectId("63727a3e9fd07639fd6a7538"), "roll" : 3, "name" : "geeta", "subject" : "dbms", "marks" : 87 }
+> db.ass3.ensureIndex({name:1}, {unique:true})
+{
+	"ok" : 0,
+	"errmsg" : "Index with name: name_1 already exists with different options",
+	"code" : 85,
+	"codeName" : "IndexOptionsConflict"
+}
+> db.ass3.ensureIndex({roll:1}, {unique:true})
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 2,
+	"numIndexesAfter" : 3,
+	"ok" : 1
+}
+> db.ass3.aggregate([{$group:{_id:"$subject", marks:{$min:"$marks"}}}])
+{ "_id" : "merc", "marks" : 79 }
+{ "_id" : "cns", "marks" : 69 }
+{ "_id" : "dsa", "marks" : 87 }
+{ "_id" : "dbms", "marks" : 87 }
+{ "_id" : "oop", "marks" : 69 }
+> 
+> 
+> select subject min(marks) from ass3 group by subject
+2022-11-14T23:16:45.681+0530 E QUERY    [thread1] SyntaxError: missing ; before statement @(shell):1:7
+> select subject min(marks) from ass3 group by subject;
+2022-11-14T23:16:49.274+0530 E QUERY    [thread1] SyntaxError: missing ; before statement @(shell):1:7
+> db.ass3.aggregate([{$group:{_id:"$subject", marks:{$max:"$marks"}}}])
+{ "_id" : "merc", "marks" : 79 }
+{ "_id" : "cns", "marks" : 69 }
+{ "_id" : "dsa", "marks" : 87 }
+{ "_id" : "dbms", "marks" : 87 }
+{ "_id" : "oop", "marks" : 75 }
+> db.ass3.aggregate([{$group:{_id:"$subject", marks:{$avg:"$marks"}}}])
+{ "_id" : "merc", "marks" : 79 }
+{ "_id" : "cns", "marks" : 69 }
+{ "_id" : "dsa", "marks" : 87 }
+{ "_id" : "dbms", "marks" : 87 }
+{ "_id" : "oop", "marks" : 72 }
+> 
+> 
+> db.ass3.aggregate([{$group:{_id:"$subject", marks:{$first:"$marks"}}}])
+{ "_id" : "merc", "marks" : 79 }
+{ "_id" : "cns", "marks" : 69 }
+{ "_id" : "dsa", "marks" : 87 }
+{ "_id" : "dbms", "marks" : 87 }
+{ "_id" : "oop", "marks" : 75 }
+> 
+> 
+> db.ass3.aggregate([{$group:{_id:"$subject", marks:{$last:"$marks"}}}])
+{ "_id" : "merc", "marks" : 79 }
+{ "_id" : "cns", "marks" : 69 }
+{ "_id" : "dsa", "marks" : 87 }
+{ "_id" : "dbms", "marks" : 87 }
+{ "_id" : "oop", "marks" : 69 }
+> 
+> 
+> db.ass3.aggregate([{$group:{_id:"$subject", marks:{$sum:"$marks"}}}])
+{ "_id" : "merc", "marks" : 79 }
+{ "_id" : "cns", "marks" : 69 }
+{ "_id" : "dsa", "marks" : 87 }
+{ "_id" : "dbms", "marks" : 87 }
+{ "_id" : "oop", "marks" : 144 }
+> 
+> 
+> db.ass3.aggregate([{$group:{_id:"$subject", count:{$sum:1}}}])
+{ "_id" : "merc", "count" : 1 }
+{ "_id" : "cns", "count" : 1 }
+{ "_id" : "dsa", "count" : 1 }
+{ "_id" : "dbms", "count" : 1 }
+{ "_id" : "oop", "count" : 2 }
+> 
+> 
+> db.ass3.aggregate([{$match:{subject:"cns}},{$group:{_id:"$subject", count:{$sum:1}}}])
+2022-11-14T23:20:48.098+0530 E QUERY    [thread1] SyntaxError: missing } after property list @(shell):1:57
+> db.ass3.aggregate([{$match:{subject:"cns"}},{$group:{_id:"$subject", count:{$sum:1}}}])
+{ "_id" : "cns", "count" : 1 }
+
