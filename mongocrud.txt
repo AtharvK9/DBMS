@@ -1,0 +1,114 @@
+atharva@atharva-Aspire-A514-54:~$ mongo
+MongoDB shell version v3.6.8
+connecting to: mongodb://127.0.0.1:27017
+Implicit session: session { "id" : UUID("da5ab629-9633-4798-b9ea-ac5b0afed4e8") }
+MongoDB server version: 3.6.8
+Server has startup warnings: 
+2022-11-14T21:00:00.104+0530 I STORAGE  [initandlisten] 
+2022-11-14T21:00:00.104+0530 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2022-11-14T21:00:00.104+0530 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] 
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2022-11-14T21:00:00.741+0530 I CONTROL  [initandlisten] 
+> use ass10;
+switched to db ass10
+> db.createCollection("Library");
+{
+	"ok" : 0,
+	"errmsg" : "a collection 'ass10.Library' already exists",
+	"code" : 48,
+	"codeName" : "NamespaceExists"
+}
+> db.createCollection("book");
+{ "ok" : 1 }
+> db.book.insert({"bid":1, "name":"C++"});
+WriteResult({ "nInserted" : 1 })
+> db.book.insert({"bid":2, "name":"Java"});
+WriteResult({ "nInserted" : 1 })
+> db.book.insert({"bid":3, "name":"Python"});
+WriteResult({ "nInserted" : 1 })
+> db.book.find();
+{ "_id" : ObjectId("63726348dd8243f238125827"), "bid" : 1, "name" : "C++" }
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("6372635fdd8243f238125829"), "bid" : 3, "name" : "Python" }
+> db.book.find().pretty();
+{ "_id" : ObjectId("63726348dd8243f238125827"), "bid" : 1, "name" : "C++" }
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{
+	"_id" : ObjectId("6372635fdd8243f238125829"),
+	"bid" : 3,
+	"name" : "Python"
+}
+> db.book.update({"name":"Python}, {$set{"name":"Python3.7"}})
+2022-11-14T21:20:05.674+0530 E QUERY    [thread1] SyntaxError: missing } after property list @(shell):1:40
+> db.book.update({"name":"Python}, {$set:{"name":"Python3.7"}})
+2022-11-14T21:20:29.869+0530 E QUERY    [thread1] SyntaxError: missing } after property list @(shell):1:41
+> db.book.update({"name":"Python"},{$set:{"name":"Python3.7"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.book.find();
+{ "_id" : ObjectId("63726348dd8243f238125827"), "bid" : 1, "name" : "C++" }
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("6372635fdd8243f238125829"), "bid" : 3, "name" : "Python3.7" }
+> db.library.remove({"bid":1});
+WriteResult({ "nRemoved" : 0 })
+> db.book.remove({"bid":1});
+WriteResult({ "nRemoved" : 1 })
+> db.book.find();
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("6372635fdd8243f238125829"), "bid" : 3, "name" : "Python3.7" }
+> db.book.find({"name":"java"});
+> db.book.find({"name":"java"})
+> db.book.find({"name":"Java"})
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+> db.book.insert({"bid":2, "name":"Java", "desc":"fake book"});
+WriteResult({ "nInserted" : 1 })
+> db.book.find();
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("6372635fdd8243f238125829"), "bid" : 3, "name" : "Python3.7" }
+{ "_id" : ObjectId("63726471dd8243f23812582a"), "bid" : 2, "name" : "Java", "desc" : "fake book" }
+> db.book.find({"name":"Java"})
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("63726471dd8243f23812582a"), "bid" : 2, "name" : "Java", "desc" : "fake book" }
+> db.book.update({"bid":"2"},{$set:{"bid":"4"}})
+WriteResult({ "nMatched" : 0, "nUpserted" : 0, "nModified" : 0 })
+> db.book.find({$and:[{"name":"Java"}, {"desc":"fake book"}]})
+{ "_id" : ObjectId("63726471dd8243f23812582a"), "bid" : 2, "name" : "Java", "desc" : "fake book" }
+> db.book.find({$or:[{"name":"Java"}, {"desc":"fake book"}]})
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("63726471dd8243f23812582a"), "bid" : 2, "name" : "Java", "desc" : "fake book" }
+> db.book.find({$or:[{"name":"Java"}, {"name":"Pyhton3.7"}]}).pretty()
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{
+	"_id" : ObjectId("63726471dd8243f23812582a"),
+	"bid" : 2,
+	"name" : "Java",
+	"desc" : "fake book"
+}
+> db.book.find({$or:[{"name":"Java"}, {"name":"Python3.7"}]}).pretty()
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{
+	"_id" : ObjectId("6372635fdd8243f238125829"),
+	"bid" : 3,
+	"name" : "Python3.7"
+}
+{
+	"_id" : ObjectId("63726471dd8243f23812582a"),
+	"bid" : 2,
+	"name" : "Java",
+	"desc" : "fake book"
+}
+> db.book.insert({"bid":4, "name":"HTML", "cost":500});
+WriteResult({ "nInserted" : 1 })
+> db.book.insert({"bid":5, "name":"CSS", "cost":700});
+WriteResult({ "nInserted" : 1 })
+> db.book.find();
+{ "_id" : ObjectId("63726355dd8243f238125828"), "bid" : 2, "name" : "Java" }
+{ "_id" : ObjectId("6372635fdd8243f238125829"), "bid" : 3, "name" : "Python3.7" }
+{ "_id" : ObjectId("63726471dd8243f23812582a"), "bid" : 2, "name" : "Java", "desc" : "fake book" }
+{ "_id" : ObjectId("63726710dd8243f23812582b"), "bid" : 4, "name" : "HTML", "cost" : 500 }
+{ "_id" : ObjectId("6372672bdd8243f23812582c"), "bid" : 5, "name" : "CSS", "cost" : 700 }
+> db.book.find({"cost":{$gte:100}});
+{ "_id" : ObjectId("63726710dd8243f23812582b"), "bid" : 4, "name" : "HTML", "cost" : 500 }
+{ "_id" : ObjectId("6372672bdd8243f23812582c"), "bid" : 5, "name" : "CSS", "cost" : 700 }
+
