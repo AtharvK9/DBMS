@@ -1,0 +1,77 @@
+atharva@atharva-Aspire-A514-54:~$ mongo
+MongoDB shell version v3.6.8
+connecting to: mongodb://127.0.0.1:27017
+Implicit session: session { "id" : UUID("05f0c332-1b05-4c23-a726-a30f945620cc") }
+MongoDB server version: 3.6.8
+Server has startup warnings: 
+2022-11-15T07:53:05.025+0530 I STORAGE  [initandlisten] 
+2022-11-15T07:53:05.025+0530 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2022-11-15T07:53:05.025+0530 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2022-11-15T07:53:05.577+0530 I CONTROL  [initandlisten] 
+2022-11-15T07:53:05.577+0530 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2022-11-15T07:53:05.577+0530 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2022-11-15T07:53:05.577+0530 I CONTROL  [initandlisten] 
+> use ass4
+switched to db ass4
+> db.stud.insert({name:'amit', marks:80})
+WriteResult({ "nInserted" : 1 })
+> db.stud.insert({name:'amit', marks:90})
+WriteResult({ "nInserted" : 1 })
+> db.stud.insert({name:'shreya', marks:40})
+WriteResult({ "nInserted" : 1 })
+> db.stud.insert({name:'neha', marks:80})
+WriteResult({ "nInserted" : 1 })
+> db.stud.insert({name:'neha', marks:35})
+WriteResult({ "nInserted" : 1 })
+> db.stud.find()
+{ "_id" : ObjectId("637302682dded5f59390de03"), "name" : "amit", "marks" : 80 }
+{ "_id" : ObjectId("637302732dded5f59390de04"), "name" : "amit", "marks" : 90 }
+{ "_id" : ObjectId("6373027f2dded5f59390de05"), "name" : "shreya", "marks" : 40 }
+{ "_id" : ObjectId("637302912dded5f59390de06"), "name" : "neha", "marks" : 80 }
+{ "_id" : ObjectId("6373029c2dded5f59390de07"), "name" : "neha", "marks" : 35 }
+{ "_id" : ObjectId("6373058139d9ef304fe40a7d"), "name" : "amit", "marks" : 80 }
+{ "_id" : ObjectId("6373058839d9ef304fe40a7e"), "name" : "amit", "marks" : 90 }
+{ "_id" : ObjectId("6373059139d9ef304fe40a7f"), "name" : "shreya", "marks" : 40 }
+{ "_id" : ObjectId("6373059639d9ef304fe40a80"), "name" : "neha", "marks" : 80 }
+{ "_id" : ObjectId("6373059c39d9ef304fe40a81"), "name" : "neha", "marks" : 35 }
+> db.stud.mapReduce( function(){ emit(this.name,1)}, function(key, values){return Array.sum(values)}, {out:"name_total"})
+{
+	"result" : "name_total",
+	"timeMillis" : 57,
+	"counts" : {
+		"input" : 10,
+		"emit" : 10,
+		"reduce" : 3,
+		"output" : 3
+	},
+	"ok" : 1
+}
+> db.name_total.find()
+{ "_id" : "amit", "value" : 4 }
+{ "_id" : "neha", "value" : 4 }
+{ "_id" : "shreya", "value" : 2 }
+> 
+> 
+> 
+> var mapFunc2 = function(){emit(this.name,this.marks);}
+> db.stud.mapReduce(mapFunc2, redFunc, {out:"name_total"})
+2022-11-15T08:56:55.915+0530 E QUERY    [thread1] ReferenceError: redFunc is not defined :
+@(shell):1:1
+> var redFunc = function(key, values){return Array.sum(values);}
+> db.stud.mapReduce(mapFunc2, redFunc, {out:"name_total"})
+{
+	"result" : "name_total",
+	"timeMillis" : 56,
+	"counts" : {
+		"input" : 10,
+		"emit" : 10,
+		"reduce" : 3,
+		"output" : 3
+	},
+	"ok" : 1
+}
+> db.name_total.find()
+{ "_id" : "amit", "value" : 340 }
+{ "_id" : "neha", "value" : 230 }
+{ "_id" : "shreya", "value" : 80 }
+
