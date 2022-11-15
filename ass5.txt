@@ -1,0 +1,133 @@
+atharva@atharva-Aspire-A514-54:~$ mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 8.0.31-0ubuntu0.20.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| ass2               |
+| ass3               |
+| ass4               |
+| ass6               |
+| ass8               |
+| assignment2        |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| university         |
++--------------------+
+11 rows in set (0.01 sec)
+
+mysql> create database ass5;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use ass5;
+Database changed
+mysql> create table borrower(rollin int primary key, name char(20), dateofissue date, bname char(20), status char(1));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc borrower;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| rollin      | int      | NO   | PRI | NULL    |       |
+| name        | char(20) | YES  |     | NULL    |       |
+| dateofissue | date     | YES  |     | NULL    |       |
+| bname       | char(20) | YES  |     | NULL    |       |
+| status      | char(1)  | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> create table fine(rollin int, fdate date, amt int(11), foreign key(rollin) references borrower(rollin));
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql> desc fine;
++--------+------+------+-----+---------+-------+
+| Field  | Type | Null | Key | Default | Extra |
++--------+------+------+-----+---------+-------+
+| rollin | int  | YES  | MUL | NULL    |       |
+| fdate  | date | YES  |     | NULL    |       |
+| amt    | int  | YES  |     | NULL    |       |
++--------+------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> insert into borrower values(1, 'a', '2020/11/1', 'java', 'I');
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> insert into borrower values(2, 'b', '2020/12/25', 'Networking', 'I');
+Query OK, 1 row affected, 1 warning (0.01 sec)
+
+mysql> insert into borrower values(3, 'c', '2021/06/15', 'DBMS', 'I');
+Query OK, 1 row affected, 1 warning (0.01 sec)
+
+mysql> insert into borrower values(4, 'd', '2021/04/10', 'CNS', 'I');
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> select * from borrower;
++--------+------+-------------+------------+--------+
+| rollin | name | dateofissue | bname      | status |
++--------+------+-------------+------------+--------+
+|      1 | a    | 2020-11-01  | java       | I      |
+|      2 | b    | 2020-12-25  | Networking | I      |
+|      3 | c    | 2021-06-15  | DBMS       | I      |
+|      4 | d    | 2021-04-10  | CNS        | I      |
++--------+------+-------------+------------+--------+
+4 rows in set (0.00 sec)
+
+mysql> delimiter $
+mysql> create procedure fine_calculation(IN rno int(3), bname char(20))
+    -> begin
+    -> declare i_date date;
+    -> declare diff int;
+    -> declare fine_amt int;
+    -> declare exit handler for sqlexception select 'Table not found';
+    -> select dateofissue into i_date from borrower where rollin = rno and bname = bname;
+    -> if(diff<15 and diff <= 30) then
+    -> set fine_amt = diff*5;
+    -> insert into fine values(rno,curdate(),fine_amt);
+    -> elseif(diff>30) then
+    -> set fine_amt = 15*5 + (diff-30)*50;
+    -> insert into fine values(rno,curdate(),fine_amt);
+    -> end if;
+    -> update borrower set status = 'R' where rolin=rno and bname=bname;
+    -> end;
+    -> $
+Query OK, 0 rows affected, 1 warning (0.02 sec)
+
+mysql> delimiter ;
+mysql> call fine_calculation(3, 'DBMS');
++-----------------+
+| Table not found |
++-----------------+
+| Table not found |
++-----------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from fine;
+Empty set (0.00 sec)
+
+mysql> select * from borrower;
++--------+------+-------------+------------+--------+
+| rollin | name | dateofissue | bname      | status |
++--------+------+-------------+------------+--------+
+|      1 | a    | 2020-11-01  | java       | I      |
+|      2 | b    | 2020-12-25  | Networking | I      |
+|      3 | c    | 2021-06-15  | DBMS       | I      |
+|      4 | d    | 2021-04-10  | CNS        | I      |
++--------+------+-------------+------------+--------+
+4 rows in set (0.00 sec)
+
